@@ -47,11 +47,22 @@ Be careful that we don't "simplify" a set of matching mixed squares:
 """
 
 
-def simplify(s):
-    """Simplify a split square:"""
+def simplify(square):
+    """Return maximally-simplified version of square."""
+    if isinstance(square, int):
+        return square
+
+    simplified_sub_squares = [simplify(sub_square) for sub_square in square]
+
+    # Check if all sub-squares are identical and are integers (not further split)
+    if all(isinstance(sq, int) for sq in simplified_sub_squares) and len(set(simplified_sub_squares)) == 1:
+        return simplified_sub_squares[0]
+
+    return simplified_sub_squares
+
 
 
 if __name__ == "__main__":
     import doctest
     if doctest.testmod().failed == 0:
-        print "\n*** ALL TESTS PASS; YOU MADE THAT SEEM SIMPLE!!\n"
+        print ("\n*** ALL TESTS PASS; YOU MADE THAT SEEM SIMPLE!!\n")

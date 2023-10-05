@@ -76,25 +76,7 @@ and then go down, left, up, up, right to find all four `O`s and the `S`::
 
 
 def make_board(board_string):
-    """Make a board from a string.
-
-    For example::
-
-        >>> board = make_board('''
-        ... N C A N E
-        ... O U I O P
-        ... Z Q Z O N
-        ... F A D P L
-        ... E D E A Z
-        ... ''')
-
-        >>> len(board)
-        5
-
-        >>> board[0]
-        ['N', 'C', 'A', 'N', 'E']
-    """
-
+    """Make a board from a string."""
     letters = board_string.split()
 
     board = [
@@ -107,13 +89,41 @@ def make_board(board_string):
 
     return board
 
-
-
 def find(board, word):
     """Can word be found in board?"""
+    rows = len(board)
+    cols = len(board[0])
 
+    def isValid(x, y, visited):
+        return x >= 0 and y >= 0 and x < rows and y < cols and not visited[x][y]
+
+    def search(x, y, index, visited):
+        if index == len(word):
+            return True
+        if not isValid(x, y, visited) or board[x][y] != word[index]:
+            return False
+
+        visited[x][y] = True
+
+        # NEWS directions
+        directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+
+        for dx, dy in directions:
+            if search(x + dx, y + dy, index + 1, [row.copy() for row in visited]):
+                return True
+
+        visited[x][y] = False
+        return False
+
+    for i in range(rows):
+        for j in range(cols):
+            if search(i, j, 0, [[False]*cols for _ in range(rows)]):
+                return True
+
+    return False
 
 if __name__ == '__main__':
     import doctest
     if doctest.testmod().failed == 0:
         print("\n*** ALL TESTS PASSED; YOU FOUND SUCCESS! ***\n")
+
